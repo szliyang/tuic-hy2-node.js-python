@@ -3,6 +3,7 @@
 # 纯 VLESS + TCP + Reality 单节点
 # 翼龙面板专用：自动检测端口
 # 零冲突、Reality 伪装、XTLS 极速
+# 20261011-xxxx fix: x25519 失败 fallback 改用 printf 真实换行 + 随机 hex
 # =========================================
 set -uo pipefail
 
@@ -46,7 +47,7 @@ get_xray() {
 # ========== 生成 VLESS Reality 配置 ==========
 gen_vless_config() {
   local shortId=$(openssl rand -hex 8)
-  local keys=$("$VLESS_BIN" x25519 2>/dev/null || echo "Private key: fallbackpriv1234567890abcdef1234567890abcdef\nPublic key: fallbackpubk1234567890abcdef1234567890abcdef")
+  local keys=$("$VLESS_BIN" x25519 2>/dev/null || printf 'Private key: %s\nPublic key: %s\n' "$(openssl rand -hex 16)$(openssl rand -hex 16)" "$(openssl rand -hex 16)$(openssl rand -hex 16)")
   local priv=$(echo "$keys" | grep Private | awk '{print $3}')
   local pub=$(echo "$keys" | grep Public | awk '{print $3}')
 

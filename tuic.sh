@@ -2,6 +2,7 @@
 # =========================================
 # TUIC v1.4.5 over QUIC 自动部署脚本（免 root）
 # 固定 SNI：www.bing.com，
+# 20261011-xxxx fix: 读取旧配置端口时误取 0.0.0.0 的数字，改用 awk 提取冒号后端口
 # =========================================
 set -euo pipefail
 export LC_ALL=C
@@ -40,7 +41,7 @@ read_port() {
 # ========== 检查已有配置 ==========
 load_existing_config() {
   if [[ -f "$SERVER_TOML" ]]; then
-    TUIC_PORT=$(grep '^server' "$SERVER_TOML" | grep -Eo '[0-9]+')
+    TUIC_PORT=$(awk -F: '/^server[[:space:]]*=/{gsub(/[^0-9]/,"",$2); print $2}' "$SERVER_TOML" | head -n1)
     TUIC_UUID=$(grep '^\[users\]' -A1 "$SERVER_TOML" | tail -n1 | awk '{print $1}')
     TUIC_PASSWORD=$(grep '^\[users\]' -A1 "$SERVER_TOML" | tail -n1 | awk -F'"' '{print $2}')
     echo "📂 Existing config detected. Loading..."

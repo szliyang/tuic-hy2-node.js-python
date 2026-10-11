@@ -1,4 +1,5 @@
 #!/bin/bash
+# 20261011-xxxx fix: 定义缺失的 VLESS_BIN 变量
 set -e
 
 echo "============================================"
@@ -7,6 +8,7 @@ echo "============================================"
 
 # 部署目录
 XRAY_DIR="/etc/xray"
+VLESS_BIN="./xray"
 mkdir -p $XRAY_DIR
 cd $XRAY_DIR
 
